@@ -1,4 +1,3 @@
-
 // Quran API Types
 export interface Chapter {
   id: number;
@@ -15,10 +14,21 @@ export interface Chapter {
   };
 }
 
+export interface Word {
+  id: number;
+  position: number;
+  text_uthmani: string;
+  translation: { text: string; language_name: string };
+  transliteration: { text: string };
+}
+
 export interface Verse {
   id: number;
   verse_key: string;
+  verse_number: number;
   text_uthmani: string;
+  text_uthmani_tajweed?: string;
+  words?: Word[];
   translations?: Array<{
     id: number;
     resource_id: number;
@@ -54,7 +64,7 @@ export interface TafsirOption {
   author: string;
 }
 
-// App State Types
+// App View Enum
 export enum View {
   HOME = 'HOME',
   READER = 'READER',
@@ -63,36 +73,80 @@ export enum View {
   BOOKMARKS = 'BOOKMARKS'
 }
 
-export interface AppState {
-  currentView: View;
-  activeChapterId: number | null;
-  activeVerseKey: string | null;
-  darkMode: boolean;
-  fontSize: number;
-  showTranslation: boolean;
-  reciterId: number; // Default 7 (Mishary)
-}
-
-// Bookmark Type
+// Bookmark Types
 export interface Bookmark {
-  id: string; // usually verse_key
+  id: string;
   verseKey: string;
   chapterId: number;
   chapterName: string;
   text: string;
   timestamp: number;
+  collectionId: string;
 }
 
-// Theme Type
-export type Theme = 'light' | 'dark' | 'system';
+export interface BookmarkCollection {
+  id: string;
+  name: string;
+  color: string;
+}
 
-// Font Configuration Types
-export type QuranFont = 'Amiri' | 'Scheherazade New' | 'Noto Naskh Arabic' | 'Lateef';
-export type LineHeight = 'compact' | 'normal' | 'loose';
-
-// Gemini Types
+// Chat
 export interface ChatMessage {
   role: 'user' | 'model';
   text: string;
   isThinking?: boolean;
+}
+
+// Theme & Appearance
+export type Theme = 'light' | 'dark' | 'system';
+export type QuranFont = 'Amiri' | 'Scheherazade New' | 'Noto Naskh Arabic' | 'Lateef';
+export type LineHeight = 'compact' | 'normal' | 'loose';
+
+// Reciter
+export interface Reciter {
+  id: number;
+  name: string;
+  nameEn: string;
+}
+
+// Reading Progress
+export interface LastRead {
+  chapterId: number;
+  verseKey: string;
+  chapterName: string;
+  timestamp: number;
+}
+
+// Khatma (Reading Plan)
+export interface KhatmaProgress {
+  completedChapters: number[];
+  startDate: number;
+  targetDays: number;
+}
+
+// Search Filter
+export interface SearchFilter {
+  revelationType: 'all' | 'makkah' | 'madinah';
+}
+
+// Audio Controls (prop group)
+export interface AudioControls {
+  isPlaying: boolean;
+  currentTime: number;
+  duration: number;
+  playbackSpeed: number;
+  currentChapterId: number | null;
+  onTogglePlay: () => void;
+  onSeek: (time: number) => void;
+  onSpeedChange: (speed: number) => void;
+}
+
+// Prayer Times
+export interface PrayerTimes {
+  Fajr: string;
+  Sunrise: string;
+  Dhuhr: string;
+  Asr: string;
+  Maghrib: string;
+  Isha: string;
 }
