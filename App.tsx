@@ -109,9 +109,9 @@ function AppContent() {
   const viewTitle = getViewTitle();
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-black sepia:bg-amber-50 text-zinc-900 dark:text-zinc-100 sepia:text-amber-950 font-sans flex flex-col pb-24 selection:bg-amber-500 selection:text-white transition-colors duration-300">
+    <div className="min-h-screen bg-zinc-50 dark:bg-black text-zinc-900 dark:text-zinc-100 font-sans flex flex-col pb-24 selection:bg-amber-500 selection:text-white transition-colors duration-300">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/80 dark:bg-black/80 sepia:bg-amber-50/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-900 sepia:border-amber-200 px-6 py-4 flex items-center justify-between transition-colors duration-300" role="banner">
+      <header className="sticky top-0 z-50 bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-900 px-6 py-4 flex items-center justify-between transition-colors duration-300" role="banner">
         <div className="flex items-center gap-3">
           {showBackButton && (
             <button

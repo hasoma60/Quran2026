@@ -46,25 +46,56 @@
         transition: background-color 0.3s ease, color 0.3s ease;
       }
 
-      /* Sepia theme */
-      .sepia body,
-      .sepia {
-        --sepia-bg: #fef3c7;
-        --sepia-text: #78350f;
+      /* Sepia theme overrides */
+      .sepia body, .sepia {
+        --sepia-bg: #fffbeb;
+        --sepia-text: #5c2d0e;
       }
-      .sepia .bg-zinc-50 { background-color: #fffbeb !important; }
-      .sepia .bg-white { background-color: #fefce8 !important; }
-      .sepia .bg-white\/80, .sepia .bg-white\/95 { background-color: rgba(254, 252, 232, 0.9) !important; }
-      .sepia .text-zinc-900 { color: #78350f !important; }
-      .sepia .text-zinc-800 { color: #92400e !important; }
-      .sepia .text-zinc-700 { color: #a16207 !important; }
-      .sepia .text-zinc-500 { color: #b45309 !important; }
-      .sepia .text-zinc-400 { color: #ca8a04 !important; }
-      .sepia .border-zinc-200 { border-color: #fde68a !important; }
-      .sepia .border-zinc-800\/50 { border-color: rgba(253, 230, 138, 0.5) !important; }
-      .sepia .bg-zinc-100 { background-color: #fef3c7 !important; }
-      .sepia .bg-zinc-900\/30 { background-color: rgba(254, 243, 199, 0.5) !important; }
-      .sepia .bg-zinc-900\/50 { background-color: rgba(254, 243, 199, 0.7) !important; }
+
+      /* Backgrounds */
+      .sepia .bg-zinc-50      { background-color: #fffbeb !important; }
+      .sepia .bg-white        { background-color: #fef9e7 !important; }
+      .sepia .bg-white\/80    { background-color: rgba(254, 249, 231, 0.85) !important; }
+      .sepia .bg-white\/95    { background-color: rgba(254, 249, 231, 0.95) !important; }
+      .sepia .bg-zinc-100     { background-color: #fde68a !important; }
+      .sepia .bg-zinc-200     { background-color: #c28a30 !important; }
+      .sepia .bg-zinc-300     { background-color: #b07e28 !important; }
+      .sepia .bg-zinc-900\/30 { background-color: rgba(253, 230, 138, 0.5) !important; }
+      .sepia .bg-zinc-900\/50 { background-color: rgba(253, 230, 138, 0.7) !important; }
+      .sepia .bg-amber-50     { background-color: #fde2a8 !important; }
+
+      /* Text */
+      .sepia .text-zinc-900   { color: #5c2d0e !important; }
+      .sepia .text-zinc-800   { color: #6b3410 !important; }
+      .sepia .text-zinc-700   { color: #7c4a12 !important; }
+      .sepia .text-zinc-600   { color: #854d0e !important; }
+      .sepia .text-zinc-500   { color: #92400e !important; }
+      .sepia .text-zinc-400   { color: #a16207 !important; }
+      .sepia .text-zinc-300   { color: #b8862d !important; }
+
+      /* Borders */
+      .sepia .border-zinc-100    { border-color: #d4a24a !important; }
+      .sepia .border-zinc-200    { border-color: #c28a30 !important; }
+      .sepia .border-zinc-300    { border-color: #a67623 !important; }
+      .sepia .border-zinc-700    { border-color: #b8862d !important; }
+      .sepia .border-zinc-800    { border-color: #c28a30 !important; }
+      .sepia .border-zinc-800\/50 { border-color: rgba(180, 130, 50, 0.5) !important; }
+      .sepia .border-zinc-900    { border-color: #c28a30 !important; }
+
+      /* Hover states */
+      .sepia .hover\:bg-zinc-50:hover   { background-color: #fef3c7 !important; }
+      .sepia .hover\:bg-zinc-100:hover  { background-color: #fde68a !important; }
+      .sepia .hover\:text-zinc-900:hover { color: #5c2d0e !important; }
+      .sepia .hover\:text-zinc-600:hover { color: #854d0e !important; }
+      .sepia .hover\:border-zinc-300:hover { border-color: #a67623 !important; }
+      .sepia .hover\:border-amber-500\/30:hover { border-color: rgba(166, 118, 35, 0.5) !important; }
+
+      /* Shadow enhancement for active pills */
+      .sepia .shadow-sm { box-shadow: 0 1px 4px rgba(120, 53, 15, 0.2) !important; }
+
+      /* Range slider track */
+      .sepia input[type="range"]::-webkit-slider-runnable-track { background-color: #c28a30 !important; }
+      .sepia input[type="range"]::-moz-range-track { background-color: #c28a30 !important; }
 
       /* Toast slide-in animation */
       @keyframes slide-in {
