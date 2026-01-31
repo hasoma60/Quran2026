@@ -6,7 +6,7 @@ import { ReciterInfo, ThematicTopic } from '../types';
 
 export const QURAN_API_BASE_URL = 'https://api.quran.com/api/v4';
 export const DEFAULT_RECITER_ID = 7; // Mishary Rashid Alafasy
-export const DEFAULT_TAFSIR_ID = 169; // Al-Sadi
+export const DEFAULT_TAFSIR_ID = 16; // Al-Muyassar (التفسير الميسر)
 export const INLINE_TRANSLATION_ID = 16; // Al-Muyassar
 export const VERSES_PER_PAGE = 300;
 export const SEARCH_DEBOUNCE_MS = 600;
