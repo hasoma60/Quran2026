@@ -1,29 +1,26 @@
 import { GoogleGenAI } from "@google/genai";
 
+// Using the flash-lite model as requested for speed and efficiency
 const MODEL_NAME = 'gemini-flash-lite-latest';
 
 let client: GoogleGenAI | null = null;
 
 const getClient = () => {
   if (!client) {
-    const apiKey = process.env.API_KEY;
-    if (!apiKey) {
-      console.error("GEMINI_API_KEY is not set");
-      throw new Error("API key not configured");
-    }
-    client = new GoogleGenAI({ apiKey });
+    client = new GoogleGenAI({ apiKey: process.env.API_KEY });
   }
   return client;
 };
 
 export const askQuranAI = async (
-  prompt: string,
+  prompt: string, 
   context?: string
 ): Promise<string> => {
   try {
     const ai = getClient();
-
+    
     let fullPrompt = prompt;
+    
     if (context) {
       fullPrompt = `سياق من تطبيق القرآن: ${context}\n\nسؤال المستخدم: ${prompt}`;
     }
@@ -36,7 +33,6 @@ export const askQuranAI = async (
         - تحدث دائماً باللغة العربية الفصحى.
         - اعتمد في إجاباتك على التفاسير المعتمدة (مثل ابن كثير، الطبري، السعدي).
         - كن موجزاً ونسق إجاباتك لتكون سهلة القراءة على الهاتف المحمول.
-        - استخدم العناوين والنقاط لتنظيم الإجابات الطويلة.
         - إذا سُئلت عن آية محددة في السياق، اشرح معناها، أسباب النزول، والتطبيق العملي لها.
         - حافظ على نغمة مهذبة وروحانية.
         - لا تصدر فتاوى شرعية؛ بدلاً من ذلك، وضح وجهات النظر المختلفة أو وجه المستخدم لاستشارة العلماء المختصين.
