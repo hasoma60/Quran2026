@@ -6,7 +6,7 @@ import { ReciterInfo, ThematicTopic } from '../types';
 
 export const QURAN_API_BASE_URL = 'https://api.quran.com/api/v4';
 export const DEFAULT_RECITER_ID = 7; // Mishary Rashid Alafasy
-export const DEFAULT_TAFSIR_ID = 169; // Al-Sadi
+export const DEFAULT_TAFSIR_ID = 16; // Al-Muyassar (التفسير الميسر)
 export const INLINE_TRANSLATION_ID = 16; // Al-Muyassar
 export const VERSES_PER_PAGE = 300;
 export const SEARCH_DEBOUNCE_MS = 600;
@@ -39,17 +39,23 @@ export const TOTAL_PAGES = 604;
 // =============================================
 
 export const RECITERS: ReciterInfo[] = [
-  { id: 7, name: 'Mishary Rashid Alafasy', nameArabic: 'مشاري راشد العفاسي', style: 'حدر' },
-  { id: 1, name: 'AbdulBaset AbdulSamad', nameArabic: 'عبدالباسط عبدالصمد', style: 'مجود' },
-  { id: 6, name: 'Mahmoud Khalil Al-Husary', nameArabic: 'محمود خليل الحصري', style: 'معلم' },
-  { id: 5, name: 'Maher Al-Muaiqly', nameArabic: 'ماهر المعيقلي', style: 'حدر' },
-  { id: 3, name: 'Saad Al-Ghamdi', nameArabic: 'سعد الغامدي', style: 'حدر' },
-  { id: 2, name: 'Abdul Rahman Al-Sudais', nameArabic: 'عبدالرحمن السديس', style: 'حدر' },
-  { id: 10, name: 'Saud Al-Shuraim', nameArabic: 'سعود الشريم', style: 'حدر' },
-  { id: 4, name: 'Abu Bakr Al-Shatri', nameArabic: 'أبو بكر الشاطري', style: 'حدر' },
-  { id: 9, name: 'Hani Ar-Rifai', nameArabic: 'هاني الرفاعي', style: 'حدر' },
-  { id: 12, name: 'Nasser Al Qatami', nameArabic: 'ناصر القطامي', style: 'حدر' },
+  { id: 7, chapterRecitationId: 7, verseRecitationId: 7, name: 'Mishary Rashid Alafasy', nameArabic: 'مشاري راشد العفاسي', style: 'حدر' },
+  { id: 1, chapterRecitationId: 1, verseRecitationId: 1, name: 'AbdulBaset AbdulSamad', nameArabic: 'عبدالباسط عبدالصمد', style: 'مجود' },
+  { id: 6, chapterRecitationId: 6, verseRecitationId: 6, name: 'Mahmoud Khalil Al-Husary', nameArabic: 'محمود خليل الحصري', style: 'مرتل' },
+  { id: 5, chapterRecitationId: 52, verseRecitationId: 0, name: 'Maher Al-Muaiqly', nameArabic: 'ماهر المعيقلي', style: 'حدر' },
+  { id: 3, chapterRecitationId: 13, verseRecitationId: 0, name: 'Saad Al-Ghamdi', nameArabic: 'سعد الغامدي', style: 'حدر' },
+  { id: 2, chapterRecitationId: 3, verseRecitationId: 3, name: 'Abdul Rahman Al-Sudais', nameArabic: 'عبدالرحمن السديس', style: 'حدر' },
+  { id: 10, chapterRecitationId: 10, verseRecitationId: 10, name: 'Saud Al-Shuraim', nameArabic: 'سعود الشريم', style: 'حدر' },
+  { id: 4, chapterRecitationId: 4, verseRecitationId: 4, name: 'Abu Bakr Al-Shatri', nameArabic: 'أبو بكر الشاطري', style: 'حدر' },
+  { id: 9, chapterRecitationId: 5, verseRecitationId: 5, name: 'Hani Ar-Rifai', nameArabic: 'هاني الرفاعي', style: 'حدر' },
+  { id: 12, chapterRecitationId: 104, verseRecitationId: 0, name: 'Nasser Al Qatami', nameArabic: 'ناصر القطامي', style: 'حدر' },
 ];
+
+export function getReciterApiIds(internalId: number): { chapterApiId: number; verseApiId: number } {
+  const reciter = RECITERS.find(r => r.id === internalId);
+  if (!reciter) return { chapterApiId: DEFAULT_RECITER_ID, verseApiId: DEFAULT_RECITER_ID };
+  return { chapterApiId: reciter.chapterRecitationId, verseApiId: reciter.verseRecitationId };
+}
 
 // =============================================
 // Tafsir Sources

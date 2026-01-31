@@ -9,7 +9,7 @@ import { useReadingProgress } from '../contexts/ReadingProgressContext';
 import { useToast } from '../contexts/ToastContext';
 import { sanitizeHTML } from '../utils/sanitize';
 import { getLineHeightValue } from '../utils/typography';
-import { DEFAULT_TAFSIR_ID } from '../utils/constants';
+import { DEFAULT_TAFSIR_ID, getReciterApiIds } from '../utils/constants';
 import ShareModal from './ShareModal';
 import {
   BookmarkIcon, SparkleIcon, PlayIcon, PauseIcon, OpenBookIcon,
@@ -134,7 +134,7 @@ export default function QuranReader({ chapter, highlightedVerseKey, onAskAi }: Q
         <h2 className="font-arabic text-5xl text-amber-600 dark:text-amber-500 mb-2">{chapter.name_arabic}</h2>
         <p className="text-zinc-500 font-sans">{chapter.revelation_place === 'makkah' ? 'مكية' : 'مدنية'} &bull; {chapter.verses_count} آية</p>
         <div className="flex justify-center mt-6 gap-3 flex-wrap">
-          <button onClick={() => playChapter(chapter, selectedReciterId)} aria-label={isPlaying && currentChapterId === chapter.id ? 'إيقاف التلاوة' : 'استماع'} className={`flex items-center gap-2 px-6 py-2.5 rounded-full transition-all font-medium font-sans ${isPlaying && currentChapterId === chapter.id && !currentVerseKey ? 'bg-amber-600 text-white shadow-[0_0_20px_rgba(217,119,6,0.3)]' : 'bg-zinc-100 dark:bg-zinc-900 text-amber-600 dark:text-amber-500 border border-zinc-200 dark:border-zinc-800 hover:border-amber-500'}`}>
+          <button onClick={() => playChapter(chapter, getReciterApiIds(selectedReciterId).chapterApiId)} aria-label={isPlaying && currentChapterId === chapter.id ? 'إيقاف التلاوة' : 'استماع'} className={`flex items-center gap-2 px-6 py-2.5 rounded-full transition-all font-medium font-sans ${isPlaying && currentChapterId === chapter.id && !currentVerseKey ? 'bg-amber-600 text-white shadow-[0_0_20px_rgba(217,119,6,0.3)]' : 'bg-zinc-100 dark:bg-zinc-900 text-amber-600 dark:text-amber-500 border border-zinc-200 dark:border-zinc-800 hover:border-amber-500'}`}>
             {isPlaying && currentChapterId === chapter.id && !currentVerseKey ? <><PauseIcon size={18} /> إيقاف التلاوة</> : <><PlayIcon size={18} /> استماع</>}
           </button>
           <button onClick={() => onAskAi(`لخص سورة ${chapter.name_arabic} واشرح مواضيعها الرئيسية.`)} className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800 hover:text-amber-600 transition-all font-sans" aria-label="ملخص السورة">
@@ -163,7 +163,7 @@ export default function QuranReader({ chapter, highlightedVerseKey, onAskAi }: Q
                 <button onClick={() => setActiveTafsirVerse(verse)} className="p-2 rounded-full text-zinc-300 dark:text-zinc-700 hover:text-amber-600 transition-colors" aria-label="تفسير">
                   <OpenBookIcon size={18} />
                 </button>
-                <button onClick={() => playVerse(chapter.id, verse.verse_key, selectedReciterId)} className={`p-2 rounded-full transition-colors ${playingThis ? 'text-amber-600' : 'text-zinc-300 dark:text-zinc-700 hover:text-amber-600'}`} aria-label="استماع للآية">
+                <button onClick={() => playVerse(chapter.id, verse.verse_key, getReciterApiIds(selectedReciterId).verseApiId)} className={`p-2 rounded-full transition-colors ${playingThis ? 'text-amber-600' : 'text-zinc-300 dark:text-zinc-700 hover:text-amber-600'}`} aria-label="استماع للآية">
                   {playingThis ? <PauseIcon size={16} /> : <PlayIcon size={16} />}
                 </button>
               </div>
