@@ -191,7 +191,32 @@ export interface Toast {
   message: string;
   type: ToastType;
   duration?: number;
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
 }
+
+// =============================================
+// UI Component Types
+// =============================================
+
+export interface SkeletonProps {
+  className?: string;
+  count?: number;
+}
+
+export interface EmptyStateProps {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
+}
+
+export type ReadingViewMode = 'flowing' | 'mushaf' | 'focus';
 
 // =============================================
 // Search Filter Types

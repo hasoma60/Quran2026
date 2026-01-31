@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { Theme, QuranFont, LineHeight, NightModeSchedule } from '../types';
+import { Theme, QuranFont, LineHeight, NightModeSchedule, ReadingViewMode } from '../types';
 import { safeGetString, safeSetString, safeGetNumber, safeGetBoolean, safeGetItem, safeSetItem } from '../utils/localStorage';
 import { DEFAULT_FONT_SIZE, DEFAULT_FONT, DEFAULT_LINE_HEIGHT, DEFAULT_THEME, DEFAULT_RECITER_ID } from '../utils/constants';
 
@@ -15,6 +15,9 @@ interface SettingsContextValue {
   setShowTranslation: (show: boolean) => void;
   activeTranslationIds: number[];
   setActiveTranslationIds: (ids: number[]) => void;
+  // Reading Mode
+  readingViewMode: ReadingViewMode;
+  setReadingViewMode: (mode: ReadingViewMode) => void;
   // Theme
   theme: Theme;
   setTheme: (theme: Theme) => void;
@@ -48,6 +51,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [nightModeSchedule, setNightModeScheduleState] = useState<NightModeSchedule>(() =>
     safeGetItem('nightModeSchedule', { enabled: false, startHour: 19, endHour: 6 })
   );
+  const [readingViewMode, setReadingViewModeState] = useState<ReadingViewMode>(() =>
+    safeGetString('readingViewMode', 'flowing') as ReadingViewMode
+  );
 
   // Persist all settings
   const setFontSize = useCallback((v: number) => { setFontSizeState(v); safeSetString('fontSize', String(v)); }, []);
@@ -59,6 +65,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const setSelectedReciterId = useCallback((v: number) => { setSelectedReciterIdState(v); safeSetString('selectedReciterId', String(v)); }, []);
   const setReducedMotion = useCallback((v: boolean) => { setReducedMotionState(v); safeSetString('reducedMotion', String(v)); }, []);
   const setNightModeSchedule = useCallback((v: NightModeSchedule) => { setNightModeScheduleState(v); safeSetItem('nightModeSchedule', v); }, []);
+  const setReadingViewMode = useCallback((v: ReadingViewMode) => { setReadingViewModeState(v); safeSetString('readingViewMode', v); }, []);
 
   // Theme effect
   useEffect(() => {
@@ -108,6 +115,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       lineHeight, setLineHeight,
       showTranslation, setShowTranslation,
       activeTranslationIds, setActiveTranslationIds,
+      readingViewMode, setReadingViewMode,
       theme, setTheme,
       nightModeSchedule, setNightModeSchedule,
       selectedReciterId, setSelectedReciterId,

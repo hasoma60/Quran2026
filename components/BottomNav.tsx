@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View } from '../types';
 import { BookIcon, OpenBookIcon, BookmarkIcon, SparkleIcon, SettingsIcon, ListIcon, CalendarIcon, NoteIcon, BrainIcon, ChartIcon, CompassIcon } from './Icons';
+import { hapticLight } from '../utils/haptics';
 
 interface BottomNavProps {
   currentView: View;
@@ -30,6 +31,7 @@ export default function BottomNav({ currentView, onViewChange, bookmarkCount }: 
   ];
 
   const handleNavClick = (item: typeof mainNavItems[0]) => {
+    hapticLight();
     if (item.isMore) {
       setShowMore(!showMore);
     } else {
@@ -49,11 +51,10 @@ export default function BottomNav({ currentView, onViewChange, bookmarkCount }: 
                 <button
                   key={item.view + item.label}
                   onClick={() => { onViewChange(item.view); setShowMore(false); }}
-                  className={`flex flex-col items-center p-3 rounded-xl transition-all text-center ${
-                    currentView === item.view
-                      ? 'text-amber-600 dark:text-amber-500 bg-amber-50 dark:bg-amber-900/10'
-                      : 'text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800'
-                  }`}
+                  className={`flex flex-col items-center p-3 rounded-xl transition-all text-center ${currentView === item.view
+                    ? 'text-amber-600 dark:text-amber-500 bg-amber-50 dark:bg-amber-900/10'
+                    : 'text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800'
+                    }`}
                   aria-label={item.label}
                 >
                   {item.icon}
@@ -66,24 +67,32 @@ export default function BottomNav({ currentView, onViewChange, bookmarkCount }: 
       )}
 
       {/* Bottom Nav Bar */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-black/95 backdrop-blur-xl border-t border-zinc-200 dark:border-zinc-900 pt-2 px-6 pb-2 transition-colors duration-300 font-sans z-[80]" role="navigation" aria-label="التنقل الرئيسي">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-black/95 backdrop-blur-xl border-t border-zinc-200 dark:border-zinc-900 pt-2 px-6 pb-safe transition-colors duration-300 font-sans z-[80]" role="navigation" aria-label="التنقل الرئيسي">
         <div className="flex justify-between items-center max-w-lg mx-auto">
           {mainNavItems.map((item) => (
             <button
               key={item.label}
               onClick={() => handleNavClick(item)}
-              className={`relative flex flex-col items-center p-3 rounded-2xl transition-all ${
-                (item.isMore ? showMore : currentView === item.view)
-                  ? 'text-amber-600 dark:text-amber-500 bg-amber-50 dark:bg-amber-900/10'
-                  : 'text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300'
-              }`}
+              className={`
+                relative flex flex-col items-center p-3 rounded-2xl transition-all duration-200
+                active:scale-95
+                ${(item.isMore ? showMore : currentView === item.view)
+                  ? 'text-amber-600 dark:text-amber-500 bg-amber-50 dark:bg-amber-900/10 shadow-sm'
+                  : 'text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900/50'
+                }
+              `}
               aria-label={item.label}
               aria-current={currentView === item.view ? 'page' : undefined}
             >
-              {item.icon}
-              <span className="text-[10px] font-medium mt-1">{item.label}</span>
+              <div className={`
+                transition-transform duration-200
+                ${(item.isMore ? showMore : currentView === item.view) ? 'scale-110' : ''}
+              `}>
+                {item.icon}
+              </div>
+              <span className="text-[10px] font-medium mt-1.5">{item.label}</span>
               {item.badge && (
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-amber-600 text-white text-[8px] rounded-full flex items-center justify-center font-bold">
+                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-amber-600 text-white text-[9px] rounded-full flex items-center justify-center font-bold shadow-sm">
                   {item.badge > 99 ? '99+' : item.badge}
                 </span>
               )}

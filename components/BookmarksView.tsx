@@ -31,12 +31,16 @@ export default function BookmarksView({ onSelect }: BookmarksViewProps) {
 
   if (bookmarks.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-96 text-center space-y-4">
-        <div className="w-16 h-16 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-zinc-400 dark:text-zinc-600">
+      <div className="flex flex-col items-center justify-center h-96 text-center space-y-5 px-4">
+        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-zinc-900/50 border border-amber-200/50 dark:border-amber-800/30 flex items-center justify-center text-amber-500 dark:text-amber-400 shadow-sm">
           <BookmarkIcon size={32} />
         </div>
-        <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 font-sans">لا توجد إشارات مرجعية</h3>
-        <p className="text-zinc-500 max-w-xs font-sans">اضغط على أيقونة الحفظ بجانب أي آية لحفظها هنا للوصول السريع.</p>
+        <div className="space-y-2">
+          <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 font-sans">لا توجد إشارات مرجعية</h3>
+          <p className="text-zinc-500 max-w-xs mx-auto font-sans text-sm leading-relaxed">
+            احفظ آياتك المفضلة للوصول إليها بسرعة في أي وقت. اضغط على أيقونة الحفظ بجانب أي آية.
+          </p>
+        </div>
       </div>
     );
   }
@@ -98,8 +102,8 @@ export default function BookmarksView({ onSelect }: BookmarksViewProps) {
             </div>
 
             <p className="text-zinc-800 dark:text-zinc-200 text-lg line-clamp-3 mb-4 leading-loose cursor-pointer"
-               style={{ fontFamily: quranFont }}
-               onClick={() => onSelect(bookmark)}>
+              style={{ fontFamily: quranFont }}
+              onClick={() => onSelect(bookmark)}>
               {bookmark.text}
             </p>
 

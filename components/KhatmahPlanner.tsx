@@ -79,11 +79,10 @@ export default function KhatmahPlanner() {
               <button
                 key={p.days}
                 onClick={() => setPlanDays(p.days)}
-                className={`p-2 rounded-lg text-xs font-sans transition-colors ${
-                  planDays === p.days
+                className={`p-2 rounded-lg text-xs font-sans transition-colors ${planDays === p.days
                     ? 'bg-amber-600 text-white'
                     : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400'
-                }`}
+                  }`}
               >
                 {p.label}
               </button>
@@ -98,10 +97,22 @@ export default function KhatmahPlanner() {
 
       {/* Active Plans */}
       {khatmahPlans.length === 0 && !showCreate ? (
-        <div className="flex flex-col items-center justify-center h-64 text-center space-y-4">
-          <CalendarIcon size={48} className="text-zinc-300 dark:text-zinc-700" />
-          <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 font-sans">لا توجد خطط</h3>
-          <p className="text-zinc-500 max-w-xs font-sans">أنشئ خطة لختم القرآن وتابع تقدمك يومياً.</p>
+        <div className="flex flex-col items-center justify-center h-64 text-center space-y-5 px-4">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-zinc-900/50 border border-amber-200/50 dark:border-amber-800/30 flex items-center justify-center text-amber-500 dark:text-amber-400 shadow-sm">
+            <CalendarIcon size={32} />
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 font-sans">لا توجد خطط ختمة</h3>
+            <p className="text-zinc-500 max-w-xs mx-auto font-sans text-sm leading-relaxed">
+              خطط لختم القرآن في وقت محدد. حدد هدفك اليومي وتابع تقدمك خطوة بخطوة.
+            </p>
+          </div>
+          <button
+            onClick={() => setShowCreate(true)}
+            className="px-6 py-2.5 rounded-xl bg-amber-600 text-white font-sans text-sm font-medium hover:bg-amber-700 transition-all active:scale-[0.98] shadow-sm hover:shadow-md"
+          >
+            إنشاء خطة جديدة
+          </button>
         </div>
       ) : (
         <div className="grid gap-4">

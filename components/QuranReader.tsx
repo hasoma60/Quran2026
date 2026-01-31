@@ -87,7 +87,7 @@ export default function QuranReader({ chapter, highlightedVerseKey, onAskAi }: Q
         }
       });
     }, { threshold: 0.5 });
-    Object.values(verseRefs.current).forEach(el => { if (el) observer.observe(el); });
+    Object.values(verseRefs.current).forEach((el: HTMLDivElement | null) => { if (el) observer.observe(el); });
     return () => observer.disconnect();
   }, [loading, verses, chapter.id, chapter.verses_count]);
 
@@ -168,31 +168,50 @@ export default function QuranReader({ chapter, highlightedVerseKey, onAskAi }: Q
                 </button>
               </div>
 
-              <p className="text-right text-zinc-900 dark:text-zinc-100 mb-4 select-text pr-10 transition-all duration-300 pt-2" style={{ fontSize: `${fontSize}px`, fontFamily: quranFont, lineHeight: lhValue }}>
+              <p className="text-right text-zinc-900 dark:text-zinc-100 mb-5 select-text pr-10 transition-all duration-300 pt-2 leading-loose" style={{ fontSize: `${fontSize}px`, fontFamily: quranFont, lineHeight: lhValue }}>
                 {verse.text_uthmani}
-                <span className="text-amber-600 dark:text-amber-600 font-sans text-lg inline-block mx-2 border border-amber-500/30 dark:border-amber-900/50 rounded-full w-8 h-8 text-center leading-7 bg-amber-50 dark:bg-zinc-900/50">{verse.verse_key.split(':')[1]}</span>
+                <span className="inline-flex items-center justify-center mx-2 text-amber-700 dark:text-amber-400 font-sans text-sm w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 align-middle">
+                  {verse.verse_key.split(':')[1]}
+                </span>
               </p>
 
               {showTranslation && verse.translations && (
-                <div className="pr-4 mr-2 border-r-2 border-zinc-200 dark:border-zinc-800">
-                  <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed text-lg text-justify font-sans">{verse.translations[0].text.replace(/<sup.*?<\/sup>/g, '')}</p>
-                  <button onClick={() => setActiveTafsirVerse(verse)} className="text-amber-600 dark:text-amber-500 text-xs mt-2 font-bold hover:underline">قراءة التفسير الكامل &larr;</button>
+                <div className="pr-4 mr-2 border-r-2 border-amber-200 dark:border-amber-800/50">
+                  <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed text-base text-justify font-sans">{verse.translations[0].text.replace(/<sup.*?<\/sup>/g, '')}</p>
+                  <button onClick={() => setActiveTafsirVerse(verse)} className="text-amber-600 dark:text-amber-500 text-xs mt-3 font-medium hover:underline flex items-center gap-1">
+                    قراءة التفسير
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="m9 18 6-6-6-6" />
+                    </svg>
+                  </button>
                 </div>
               )}
 
-              <div className="flex justify-end mt-4 gap-3 flex-wrap">
-                <button onClick={() => onAskAi(`اشرح الآية ${verse.verse_key} من سورة ${chapter.name_arabic}: "${verse.text_uthmani}"`)} className="text-xs text-amber-600 dark:text-amber-500 flex items-center gap-1 hover:underline font-sans" aria-label="تدبر مع الذكاء الاصطناعي">
+              <div className="flex justify-end mt-5 gap-2 flex-wrap">
+                <button
+                  onClick={() => onAskAi(`اشرح الآية ${verse.verse_key} من سورة ${chapter.name_arabic}: "${verse.text_uthmani}"`)}
+                  className="px-3 py-1.5 rounded-lg text-xs bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors flex items-center gap-1.5 font-sans font-medium"
+                  aria-label="تدبر مع الذكاء الاصطناعي"
+                >
                   <SparkleIcon size={12} /> تدبر مع نور
                 </button>
-                <button onClick={() => setShareVerse(verse)} className="text-xs text-zinc-400 flex items-center gap-1 hover:text-amber-600 font-sans" aria-label="مشاركة">
+                <button
+                  onClick={() => setShareVerse(verse)}
+                  className="px-3 py-1.5 rounded-lg text-xs bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors flex items-center gap-1.5 font-sans"
+                  aria-label="مشاركة"
+                >
                   <ShareIcon size={12} /> مشاركة
                 </button>
-                <button onClick={() => { setNoteVerse(verse); setNoteText(''); }} className="text-xs text-zinc-400 flex items-center gap-1 hover:text-amber-600 font-sans" aria-label="ملاحظة">
+                <button
+                  onClick={() => { setNoteVerse(verse); setNoteText(''); }}
+                  className="px-3 py-1.5 rounded-lg text-xs bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors flex items-center gap-1.5 font-sans"
+                  aria-label="ملاحظة"
+                >
                   <NoteIcon size={12} /> ملاحظة
                 </button>
               </div>
 
-              {!highlighted && <div className="h-px bg-zinc-200 dark:bg-zinc-900 mt-8 w-1/2 mx-auto"></div>}
+              {!highlighted && <div className="h-px bg-gradient-to-r from-transparent via-zinc-200 dark:via-zinc-800 to-transparent mt-8"></div>}
             </div>
           );
         })}

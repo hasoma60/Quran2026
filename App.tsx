@@ -110,6 +110,11 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black text-zinc-900 dark:text-zinc-100 font-sans flex flex-col pb-24 selection:bg-amber-500 selection:text-white transition-colors duration-300">
+      {/* Skip to content link for accessibility */}
+      <a href="#main-content" className="skip-to-content">
+        الانتقال للمحتوى الرئيسي
+      </a>
+
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-900 px-6 py-4 flex items-center justify-between transition-colors duration-300" role="banner">
         <div className="flex items-center gap-3">
@@ -146,7 +151,7 @@ function AppContent() {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 w-full max-w-3xl mx-auto p-4 sm:p-6" role="main">
+      <main id="main-content" className="flex-1 w-full max-w-3xl mx-auto p-4 sm:p-6 animate-fade-in-up" role="main" tabIndex={-1}>
         <ErrorBoundary>
           {currentView === View.HOME && (
             <ChapterList

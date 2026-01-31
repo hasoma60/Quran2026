@@ -32,12 +32,16 @@ export default function NotesView({ onNavigate }: NotesViewProps) {
 
   if (notes.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-96 text-center space-y-4">
-        <div className="w-16 h-16 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-zinc-400 dark:text-zinc-600">
+      <div className="flex flex-col items-center justify-center h-96 text-center space-y-5 px-4">
+        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-zinc-900/50 border border-amber-200/50 dark:border-amber-800/30 flex items-center justify-center text-amber-500 dark:text-amber-400 shadow-sm">
           <NoteIcon size={32} />
         </div>
-        <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 font-sans">لا توجد ملاحظات</h3>
-        <p className="text-zinc-500 max-w-xs font-sans">يمكنك إضافة ملاحظاتك وتأملاتك على أي آية أثناء القراءة.</p>
+        <div className="space-y-2">
+          <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 font-sans">لا توجد ملاحظات</h3>
+          <p className="text-zinc-500 max-w-xs mx-auto font-sans text-sm leading-relaxed">
+            سجل تأملاتك وملاحظاتك على الآيات أثناء قراءتك. الملاحظات تساعدك على فهم أعمق للقرآن.
+          </p>
+        </div>
       </div>
     );
   }

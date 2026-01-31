@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Theme, QuranFont, LineHeight } from '../types';
+import { Theme, QuranFont, LineHeight, ReadingViewMode } from '../types';
 import { useSettings } from '../contexts/SettingsContext';
 import { getLineHeightValue } from '../utils/typography';
 import { APP_VERSION, RECITERS } from '../utils/constants';
@@ -10,7 +10,8 @@ export default function SettingsView() {
   const {
     fontSize, setFontSize, quranFont, setQuranFont, lineHeight, setLineHeight,
     showTranslation, setShowTranslation, theme, setTheme,
-    selectedReciterId, nightModeSchedule, setNightModeSchedule, reducedMotion, setReducedMotion
+    selectedReciterId, nightModeSchedule, setNightModeSchedule, reducedMotion, setReducedMotion,
+    readingViewMode, setReadingViewMode
   } = useSettings();
   const [showReciterSelector, setShowReciterSelector] = useState(false);
 
@@ -96,7 +97,7 @@ export default function SettingsView() {
           {/* Live Preview */}
           <div className="p-6 border border-zinc-200 dark:border-zinc-800 rounded-xl bg-zinc-50 dark:bg-black transition-all">
             <p className="text-center text-zinc-900 dark:text-zinc-100 transition-all duration-300" style={{ fontFamily: quranFont, fontSize: `${fontSize}px`, lineHeight: getLineHeightValue(lineHeight) }}>
-              بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ<br/>ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَـٰلَمِينَ
+              بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ<br />ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَـٰلَمِينَ
             </p>
           </div>
         </div>
@@ -124,6 +125,30 @@ export default function SettingsView() {
           <button onClick={() => setReducedMotion(!reducedMotion)} className={`w-12 h-6 rounded-full transition-colors relative ${reducedMotion ? 'bg-amber-600' : 'bg-zinc-200 dark:bg-zinc-800'}`} aria-label="تقليل الحركة">
             <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${reducedMotion ? 'left-7' : 'left-1'}`}></div>
           </button>
+        </div>
+
+        {/* Reading View Mode */}
+        <div>
+          <label className="text-zinc-900 dark:text-zinc-300 font-bold mb-3 block font-sans text-sm">وضع القراءة</label>
+          <div className="grid grid-cols-3 gap-2 bg-zinc-100 dark:bg-black p-1 rounded-xl font-sans">
+            {([
+              { id: 'flowing', label: 'مستمر', icon: '≡' },
+              { id: 'mushaf', label: 'مصحف', icon: '▭' },
+              { id: 'focus', label: 'تركيز', icon: '◎' }
+            ] as { id: ReadingViewMode; label: string; icon: string }[]).map((mode) => (
+              <button
+                key={mode.id}
+                onClick={() => setReadingViewMode(mode.id)}
+                className={`py-2 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-1 ${readingViewMode === mode.id
+                    ? 'bg-white dark:bg-zinc-800 text-amber-600 dark:text-amber-500 shadow-sm'
+                    : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300'
+                  }`}
+              >
+                <span>{mode.icon}</span>
+                <span>{mode.label}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Export/Import */}
