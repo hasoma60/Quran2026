@@ -1,19 +1,39 @@
-import React from 'react';
-import { Bookmark, QuranFont } from '../types';
+import React, { useState } from 'react';
+import { Bookmark, BookmarkCategory, BOOKMARK_CATEGORIES } from '../types';
+import { useBookmarks } from '../contexts/BookmarkContext';
+import { useSettings } from '../contexts/SettingsContext';
+import { useToast } from '../contexts/ToastContext';
+import { BookmarkIcon, CloseIcon, TrashIcon, TagIcon } from './Icons';
 
 interface BookmarksViewProps {
-  bookmarks: Bookmark[];
-  quranFont: QuranFont;
   onSelect: (bookmark: Bookmark) => void;
-  onDelete: (id: string) => void;
 }
 
-export default function BookmarksView({ bookmarks, quranFont, onSelect, onDelete }: BookmarksViewProps) {
+export default function BookmarksView({ onSelect }: BookmarksViewProps) {
+  const { bookmarks, deleteBookmark, updateBookmarkCategory } = useBookmarks();
+  const { quranFont } = useSettings();
+  const { showToast } = useToast();
+  const [activeCategory, setActiveCategory] = useState<BookmarkCategory | 'all'>('all');
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+
+  const filtered = activeCategory === 'all' ? bookmarks : bookmarks.filter(b => b.category === activeCategory);
+
+  const handleDelete = (id: string) => {
+    if (confirmDelete === id) {
+      deleteBookmark(id);
+      showToast('تم حذف الإشارة المرجعية', 'info');
+      setConfirmDelete(null);
+    } else {
+      setConfirmDelete(id);
+      setTimeout(() => setConfirmDelete(null), 3000);
+    }
+  };
+
   if (bookmarks.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-96 text-center space-y-4">
         <div className="w-16 h-16 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-zinc-400 dark:text-zinc-600">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+          <BookmarkIcon size={32} />
         </div>
         <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 font-sans">لا توجد إشارات مرجعية</h3>
         <p className="text-zinc-500 max-w-xs font-sans">اضغط على أيقونة الحفظ بجانب أي آية لحفظها هنا للوصول السريع.</p>
@@ -24,32 +44,66 @@ export default function BookmarksView({ bookmarks, quranFont, onSelect, onDelete
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 px-2 font-sans">الآيات المحفوظة</h2>
+
+      {/* Category Filter */}
+      <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+        <button
+          onClick={() => setActiveCategory('all')}
+          className={`whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-sans font-medium transition-colors ${activeCategory === 'all' ? 'bg-amber-600 text-white' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400'}`}
+        >
+          الكل ({bookmarks.length})
+        </button>
+        {BOOKMARK_CATEGORIES.map(cat => {
+          const count = bookmarks.filter(b => b.category === cat.id).length;
+          if (count === 0) return null;
+          return (
+            <button
+              key={cat.id}
+              onClick={() => setActiveCategory(cat.id)}
+              className={`whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-sans font-medium transition-colors ${activeCategory === cat.id ? 'bg-amber-600 text-white' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400'}`}
+            >
+              {cat.label} ({count})
+            </button>
+          );
+        })}
+      </div>
+
       <div className="grid gap-4">
-        {bookmarks.map((bookmark) => (
-          <div 
-            key={bookmark.id} 
+        {filtered.map((bookmark) => (
+          <div
+            key={bookmark.id}
             className="group relative flex flex-col p-5 rounded-2xl bg-white dark:bg-zinc-900/30 border border-zinc-200 dark:border-zinc-800/50 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all"
           >
             <div className="flex justify-between items-start mb-3">
               <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-500 text-xs font-semibold font-sans">
-                سورة {bookmark.chapterName} • {bookmark.verseKey}
+                سورة {bookmark.chapterName} &bull; {bookmark.verseKey}
               </span>
-              <button 
-                onClick={(e) => { e.stopPropagation(); onDelete(bookmark.id); }}
-                className="text-zinc-400 hover:text-red-500 transition-colors p-1"
-                aria-label="حذف الإشارة"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-              </button>
+              <div className="flex gap-1">
+                <select
+                  value={bookmark.category || 'general'}
+                  onChange={(e) => { updateBookmarkCategory(bookmark.id, e.target.value as BookmarkCategory); showToast('تم تحديث التصنيف', 'success'); }}
+                  className="text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1 font-sans text-zinc-600 dark:text-zinc-400"
+                  aria-label="تصنيف الإشارة"
+                >
+                  {BOOKMARK_CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
+                </select>
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleDelete(bookmark.id); }}
+                  className={`transition-colors p-1 rounded ${confirmDelete === bookmark.id ? 'text-red-500 bg-red-50 dark:bg-red-900/20' : 'text-zinc-400 hover:text-red-500'}`}
+                  aria-label={confirmDelete === bookmark.id ? 'تأكيد الحذف' : 'حذف الإشارة'}
+                >
+                  {confirmDelete === bookmark.id ? <span className="text-xs font-sans font-bold">تأكيد؟</span> : <TrashIcon size={16} />}
+                </button>
+              </div>
             </div>
-            
-            <p className="text-zinc-800 dark:text-zinc-200 text-lg line-clamp-3 mb-4 leading-loose cursor-pointer" 
+
+            <p className="text-zinc-800 dark:text-zinc-200 text-lg line-clamp-3 mb-4 leading-loose cursor-pointer"
                style={{ fontFamily: quranFont }}
                onClick={() => onSelect(bookmark)}>
               {bookmark.text}
             </p>
-            
-            <button 
+
+            <button
               onClick={() => onSelect(bookmark)}
               className="text-sm font-medium text-amber-600 dark:text-amber-500 hover:underline self-end font-sans"
             >
