@@ -1,0 +1,7 @@
+{
+  "name": "نور القرآن - تجربة مميزة",
+  "description": "تطبيق قرآن كريم مخصص لجهاز S25 Ultra، يتميز بوضوح القراءة، الوضع الداكن، ودمج ذكاء Gemini لتفسير القرآن.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

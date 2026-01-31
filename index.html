@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>نور القرآن</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;500;600;700&family=Lateef&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Scheherazade+New:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Cairo', 'sans-serif'],
+              arabic: ['Amiri', 'serif'],
+              script: ['Lateef', 'cursive'],
+              naskh: ['Noto Naskh Arabic', 'serif'],
+              scheherazade: ['Scheherazade New', 'serif'],
+            },
+            colors: {
+              emerald: {
+                950: '#022c22',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      /* Hide scrollbar for Chrome, Safari and Opera */
+      .no-scrollbar::-webkit-scrollbar {
+          display: none;
+      }
+      /* Hide scrollbar for IE, Edge and Firefox */
+      .no-scrollbar {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
+      }
+      body {
+        overscroll-behavior-y: none; /* Prevent pull-to-refresh on mobile */
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "@google/genai": "https://esm.sh/@google/genai@^1.39.0"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
