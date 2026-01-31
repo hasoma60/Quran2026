@@ -94,6 +94,7 @@ export const fetchChapterAudio = async (chapterId: number, reciterId: number = D
 
 // Verse-level audio playback
 export const fetchVerseAudio = async (verseKey: string, reciterId: number = DEFAULT_RECITER_ID): Promise<string | null> => {
+  if (reciterId <= 0) return null; // Reciter not available at verse level
   const cacheKey = `audio-verse-${verseKey}-${reciterId}`;
   return apiCache.getOrFetch(cacheKey, async () => {
     try {

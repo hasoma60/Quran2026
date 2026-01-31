@@ -125,6 +125,8 @@ export interface VerseNote {
 
 export interface ReciterInfo {
   id: number;
+  chapterRecitationId: number;
+  verseRecitationId: number;
   name: string;
   nameArabic: string;
   style?: string;
