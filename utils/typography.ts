@@ -22,9 +22,10 @@ export function formatVerseNumber(verseKey: string): string {
 /**
  * Convert number to Arabic numerals
  */
+const ARABIC_NUMERALS = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'] as const;
+
 export function toArabicNumerals(num: number): string {
-  const arabicNumerals = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-  return String(num).replace(/[0-9]/g, (d) => arabicNumerals[parseInt(d)]);
+  return String(num).replace(/[0-9]/g, (d) => ARABIC_NUMERALS[parseInt(d, 10)]);
 }
 
 /**

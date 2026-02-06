@@ -83,9 +83,14 @@ function AppContent() {
   const handleBookmarkSelect = (bookmark: { chapterId: number; verseKey: string }) => {
     const chapter = chapters.find(c => c.id === bookmark.chapterId);
     if (chapter) {
+      // Clear first to force useEffect re-trigger even for same verse
+      setHighlightedVerseKey(null);
       setActiveChapter(chapter);
-      setHighlightedVerseKey(bookmark.verseKey);
       setCurrentView(View.READER);
+      // Set in next tick so the effect detects the change
+      requestAnimationFrame(() => {
+        setHighlightedVerseKey(bookmark.verseKey);
+      });
     }
   };
 
@@ -164,8 +169,12 @@ function AppContent() {
           {currentView === View.READER && activeChapter && (
             <QuranReader
               chapter={activeChapter}
+              chapters={chapters}
               highlightedVerseKey={highlightedVerseKey}
               onAskAi={handleAiInquiry}
+              onChapterSelect={handleChapterSelect}
+              onVerseSelect={handleVerseSearchSelect}
+              onBookmarkSelect={handleBookmarkSelect}
             />
           )}
 
@@ -187,7 +196,7 @@ function AppContent() {
             )}
 
             {currentView === View.JUZ_NAVIGATOR && (
-              <JuzNavigator onNavigate={handleVerseSearchSelect} />
+              <JuzNavigator chapters={chapters} onNavigate={handleVerseSearchSelect} />
             )}
 
             {currentView === View.KHATMAH && (
@@ -203,11 +212,11 @@ function AppContent() {
             )}
 
             {currentView === View.STATS && (
-              <QuranStats />
+              <QuranStats chapters={chapters} />
             )}
 
             {currentView === View.THEMATIC && (
-              <ThematicIndex onNavigate={handleVerseSearchSelect} />
+              <ThematicIndex chapters={chapters} onNavigate={handleVerseSearchSelect} />
             )}
           </Suspense>
         </ErrorBoundary>

@@ -41,9 +41,14 @@ export default function ExportImport() {
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
-        const data = JSON.parse(e.target?.result as string) as AppExportData;
+        const data = JSON.parse(e.target?.result as string);
 
-        if (!data.version || !data.bookmarks) {
+        if (!data || typeof data !== 'object' || !data.version || !Array.isArray(data.bookmarks)) {
+          showToast('ملف غير صالح', 'error');
+          return;
+        }
+
+        if (data.notes && !Array.isArray(data.notes)) {
           showToast('ملف غير صالح', 'error');
           return;
         }

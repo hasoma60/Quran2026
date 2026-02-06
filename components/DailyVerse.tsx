@@ -4,6 +4,7 @@ import { fetchVerseOfTheDay } from '../services/quranService';
 import { useSettings } from '../contexts/SettingsContext';
 import { SparkleIcon, ShareIcon, CopyIcon } from './Icons';
 import { useToast } from '../contexts/ToastContext';
+import { stripHTML } from '../utils/sanitize';
 
 interface DailyVerseProps {
   onNavigate: (chapterId: number, verseKey: string) => void;
@@ -16,10 +17,14 @@ export default function DailyVerse({ onNavigate }: DailyVerseProps) {
   const { showToast } = useToast();
 
   useEffect(() => {
-    fetchVerseOfTheDay().then(result => {
-      setData(result);
-      setLoading(false);
-    });
+    fetchVerseOfTheDay()
+      .then(result => {
+        setData(result);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
   }, []);
 
   const handleCopy = async () => {
@@ -86,7 +91,7 @@ export default function DailyVerse({ onNavigate }: DailyVerseProps) {
         </p>
         {data.verse.translations?.[0] && (
           <p className="text-sm text-zinc-500 dark:text-zinc-400 font-sans leading-relaxed mb-2">
-            {data.verse.translations[0].text.replace(/<sup.*?<\/sup>/g, '')}
+            {stripHTML(data.verse.translations[0].text)}
           </p>
         )}
         <span className="text-xs font-semibold text-amber-600 dark:text-amber-500 font-sans">

@@ -10,6 +10,7 @@ export default function KhatmahPlanner() {
   const [showCreate, setShowCreate] = useState(false);
   const [planName, setPlanName] = useState('');
   const [planDays, setPlanDays] = useState(30);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const presets = [
     { days: 7, label: 'أسبوع واحد' },
@@ -131,8 +132,17 @@ export default function KhatmahPlanner() {
                       {toArabicNumerals(completed)} من {toArabicNumerals(plan.totalDays)} يوم
                     </p>
                   </div>
-                  <button onClick={() => { deleteKhatmahPlan(plan.id); showToast('تم حذف الخطة', 'info'); }} className="p-1.5 text-zinc-400 hover:text-red-500" aria-label="حذف الخطة">
-                    <TrashIcon size={16} />
+                  <button onClick={() => {
+                    if (confirmDeleteId === plan.id) {
+                      deleteKhatmahPlan(plan.id);
+                      showToast('تم حذف الخطة', 'info');
+                      setConfirmDeleteId(null);
+                    } else {
+                      setConfirmDeleteId(plan.id);
+                      setTimeout(() => setConfirmDeleteId(null), 3000);
+                    }
+                  }} className={`p-1.5 transition-colors ${confirmDeleteId === plan.id ? 'text-red-500 bg-red-50 dark:bg-red-900/20 rounded' : 'text-zinc-400 hover:text-red-500'}`} aria-label={confirmDeleteId === plan.id ? 'تأكيد الحذف' : 'حذف الخطة'}>
+                    {confirmDeleteId === plan.id ? <span className="text-xs font-sans font-bold">تأكيد؟</span> : <TrashIcon size={16} />}
                   </button>
                 </div>
 

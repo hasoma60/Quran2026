@@ -98,13 +98,13 @@ export default function MemorizationHelper({ chapters }: MemorizationHelperProps
           <div>
             <label className="text-xs font-bold text-zinc-500 font-sans">من آية</label>
             <input type="number" min={1} max={verses.length} value={fromVerse}
-              onChange={e => { setFromVerse(Number(e.target.value)); setCurrentVerseIdx(0); }}
+              onChange={e => { const v = Math.max(1, Math.min(Number(e.target.value), verses.length)); setFromVerse(v); if (toVerse < v) setToVerse(v); setCurrentVerseIdx(0); }}
               className="w-full p-2 rounded-lg bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-sans mt-1" />
           </div>
           <div>
             <label className="text-xs font-bold text-zinc-500 font-sans">إلى آية</label>
             <input type="number" min={fromVerse} max={verses.length} value={toVerse}
-              onChange={e => setToVerse(Number(e.target.value))}
+              onChange={e => { const v = Math.max(fromVerse, Math.min(Number(e.target.value), verses.length)); setToVerse(v); }}
               className="w-full p-2 rounded-lg bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-sans mt-1" />
           </div>
         </div>

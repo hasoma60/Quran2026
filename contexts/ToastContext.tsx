@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
 import { Toast, ToastType } from '../types';
 import { ToastItem } from '../components/ui/Toast';
 
@@ -18,6 +18,7 @@ export function useToast() {
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const timeoutsRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const showToast = useCallback((message: string, type: ToastType = 'success', duration = 3000, action?: { label: string; onClick: () => void }) => {
     const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -26,14 +27,21 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     setToasts(prev => [...prev, toast]);
 
     if (duration > 0) {
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         setToasts(prev => prev.filter(t => t.id !== id));
-      }, duration + 300); // Add buffer for exit animation
+        timeoutsRef.current.delete(id);
+      }, duration + 300);
+      timeoutsRef.current.set(id, timeout);
     }
   }, []);
 
   const dismissToast = useCallback((id: string) => {
     setToasts(prev => prev.filter(t => t.id !== id));
+    const timeout = timeoutsRef.current.get(id);
+    if (timeout) {
+      clearTimeout(timeout);
+      timeoutsRef.current.delete(id);
+    }
   }, []);
 
   return (

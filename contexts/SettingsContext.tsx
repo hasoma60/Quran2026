@@ -97,9 +97,16 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const handleChange = () => { if (theme === 'system') applyTheme(); };
     mediaQuery.addEventListener('change', handleChange);
 
-    // Re-check night mode every minute
+    // Re-check night mode only when the hour changes
+    let lastHour = new Date().getHours();
     const interval = nightModeSchedule.enabled
-      ? setInterval(applyTheme, 60000)
+      ? setInterval(() => {
+          const currentHour = new Date().getHours();
+          if (currentHour !== lastHour) {
+            lastHour = currentHour;
+            applyTheme();
+          }
+        }, 60000)
       : undefined;
 
     return () => {

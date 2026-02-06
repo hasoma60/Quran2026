@@ -25,14 +25,6 @@ export default function AIChat({ initialContext, chatMessages, setChatMessages }
     scrollToBottom();
   }, [chatMessages]);
 
-  // Handle auto-sending context - use ref to avoid stale closure
-  useEffect(() => {
-    if (initialContext && !initialSent.current && chatMessages.length <= 1) {
-      initialSent.current = true;
-      sendMessage(initialContext);
-    }
-  }, [initialContext]);
-
   const sendMessage = useCallback(async (text: string) => {
     if (!text.trim() || loading) return;
 
@@ -48,6 +40,14 @@ export default function AIChat({ initialContext, chatMessages, setChatMessages }
     setChatMessages([...updatedMessages, { role: 'model', text: responseText }]);
     setLoading(false);
   }, [chatMessages, loading, setChatMessages]);
+
+  // Handle auto-sending context
+  useEffect(() => {
+    if (initialContext && !initialSent.current && chatMessages.length <= 1) {
+      initialSent.current = true;
+      sendMessage(initialContext);
+    }
+  }, [initialContext, sendMessage, chatMessages.length]);
 
   const handleSend = () => sendMessage(input);
 

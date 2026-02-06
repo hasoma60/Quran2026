@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Bookmark, BookmarkCategory, BOOKMARK_CATEGORIES } from '../types';
 import { useBookmarks } from '../contexts/BookmarkContext';
 import { useSettings } from '../contexts/SettingsContext';
@@ -15,6 +15,13 @@ export default function BookmarksView({ onSelect }: BookmarksViewProps) {
   const { showToast } = useToast();
   const [activeCategory, setActiveCategory] = useState<BookmarkCategory | 'all'>('all');
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const confirmTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (confirmTimeoutRef.current) clearTimeout(confirmTimeoutRef.current);
+    };
+  }, []);
 
   const filtered = activeCategory === 'all' ? bookmarks : bookmarks.filter(b => b.category === activeCategory);
 
@@ -23,9 +30,11 @@ export default function BookmarksView({ onSelect }: BookmarksViewProps) {
       deleteBookmark(id);
       showToast('تم حذف الإشارة المرجعية', 'info');
       setConfirmDelete(null);
+      if (confirmTimeoutRef.current) clearTimeout(confirmTimeoutRef.current);
     } else {
       setConfirmDelete(id);
-      setTimeout(() => setConfirmDelete(null), 3000);
+      if (confirmTimeoutRef.current) clearTimeout(confirmTimeoutRef.current);
+      confirmTimeoutRef.current = setTimeout(() => setConfirmDelete(null), 3000);
     }
   };
 

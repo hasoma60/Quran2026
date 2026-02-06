@@ -11,6 +11,7 @@ interface CacheEntry<T> {
 class APICache {
   private store = new Map<string, CacheEntry<unknown>>();
   private defaultTTL = 30 * 60 * 1000; // 30 minutes
+  private maxSize = 200;
 
   get<T>(key: string): T | null {
     const entry = this.store.get(key);
@@ -26,6 +27,11 @@ class APICache {
   }
 
   set<T>(key: string, data: T, ttl?: number): void {
+    // Evict oldest entry if cache is full
+    if (this.store.size >= this.maxSize && !this.store.has(key)) {
+      const firstKey = this.store.keys().next().value;
+      if (firstKey !== undefined) this.store.delete(firstKey);
+    }
     this.store.set(key, {
       data,
       timestamp: Date.now(),

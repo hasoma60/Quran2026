@@ -116,8 +116,12 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
       const audio = setupAudio(url);
       setCurrentChapterId(chapter.id);
       setCurrentVerseKey(null);
-      await audio.play();
-      setIsPlaying(true);
+      try {
+        await audio.play();
+        setIsPlaying(true);
+      } catch (err) {
+        console.warn('Audio playback failed:', err);
+      }
     }
   }, [currentChapterId, currentVerseKey, isPlaying, setupAudio]);
 
@@ -139,8 +143,12 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
       const audio = setupAudio(url);
       setCurrentChapterId(chapterId);
       setCurrentVerseKey(verseKey);
-      await audio.play();
-      setIsPlaying(true);
+      try {
+        await audio.play();
+        setIsPlaying(true);
+      } catch (err) {
+        console.warn('Audio playback failed:', err);
+      }
     }
   }, [currentVerseKey, isPlaying, setupAudio]);
 

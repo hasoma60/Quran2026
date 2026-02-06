@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 
 // =============================================
 // Quran API Types
@@ -207,7 +208,7 @@ export interface SkeletonProps {
 }
 
 export interface EmptyStateProps {
-  icon: React.ReactNode;
+  icon: ReactNode;
   title: string;
   description: string;
   action?: {
