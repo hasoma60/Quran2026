@@ -169,8 +169,12 @@ function AppContent() {
           {currentView === View.READER && activeChapter && (
             <QuranReader
               chapter={activeChapter}
+              chapters={chapters}
               highlightedVerseKey={highlightedVerseKey}
               onAskAi={handleAiInquiry}
+              onChapterSelect={handleChapterSelect}
+              onVerseSelect={handleVerseSearchSelect}
+              onBookmarkSelect={handleBookmarkSelect}
             />
           )}
 

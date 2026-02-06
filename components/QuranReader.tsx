@@ -9,22 +9,35 @@ import { useReadingProgress } from '../contexts/ReadingProgressContext';
 import { useToast } from '../contexts/ToastContext';
 import { sanitizeHTML, stripHTML } from '../utils/sanitize';
 import { getLineHeightValue, toArabicNumerals } from '../utils/typography';
-import { DEFAULT_TAFSIR_ID, getReciterApiIds } from '../utils/constants';
+import { DEFAULT_TAFSIR_ID, getReciterApiIds, getJuzForChapter, JUZ_ARABIC_NAMES } from '../utils/constants';
 import ShareModal from './ShareModal';
+import MushafNavigator from './MushafNavigator';
 import {
   BookmarkIcon, SparkleIcon, PlayIcon, PauseIcon, OpenBookIcon,
-  CloseIcon, ShareIcon, NoteIcon, BackIcon
+  CloseIcon, ShareIcon, NoteIcon, BackIcon, ListIcon
 } from './Icons';
 
 const MUSHAF_VERSES_PER_PAGE = 10;
 
 interface QuranReaderProps {
   chapter: Chapter;
+  chapters: Chapter[];
   highlightedVerseKey: string | null;
   onAskAi: (context: string) => void;
+  onChapterSelect: (chapter: Chapter) => void;
+  onVerseSelect: (chapterId: number, verseKey: string) => void;
+  onBookmarkSelect: (bookmark: { chapterId: number; verseKey: string }) => void;
 }
 
-export default function QuranReader({ chapter, highlightedVerseKey, onAskAi }: QuranReaderProps) {
+export default function QuranReader({
+  chapter,
+  chapters,
+  highlightedVerseKey,
+  onAskAi,
+  onChapterSelect,
+  onVerseSelect,
+  onBookmarkSelect,
+}: QuranReaderProps) {
   const { fontSize, quranFont, lineHeight, showTranslation, selectedReciterId, readingViewMode } = useSettings();
   const { toggleBookmark, isBookmarked, addNote } = useBookmarks();
   const { isPlaying, currentVerseKey, playChapter, playVerse, currentChapterId } = useAudio();
@@ -48,6 +61,9 @@ export default function QuranReader({ chapter, highlightedVerseKey, onAskAi }: Q
   const [mushafPage, setMushafPage] = useState(0);
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
+
+  // Navigator state
+  const [showNavigator, setShowNavigator] = useState(false);
 
   useEffect(() => {
     const loadVerses = async () => {
@@ -127,6 +143,10 @@ export default function QuranReader({ chapter, highlightedVerseKey, onAskAi }: Q
 
   const lhValue = getLineHeightValue(lineHeight);
 
+  // Juz info for current chapter
+  const juzNumber = getJuzForChapter(chapter.id);
+  const juzName = JUZ_ARABIC_NAMES[juzNumber - 1];
+
   // Mushaf pagination
   const totalMushafPages = Math.ceil(verses.length / MUSHAF_VERSES_PER_PAGE);
   const mushafPageVerses = useMemo(() => {
@@ -168,6 +188,30 @@ export default function QuranReader({ chapter, highlightedVerseKey, onAskAi }: Q
       }
     }
   }, [goToNextPage, goToPrevPage]);
+
+  // Navigator render
+  const renderNavigator = () => (
+    <MushafNavigator
+      chapters={chapters}
+      isOpen={showNavigator}
+      onClose={() => setShowNavigator(false)}
+      onChapterSelect={onChapterSelect}
+      onVerseSelect={onVerseSelect}
+      onBookmarkSelect={onBookmarkSelect}
+    />
+  );
+
+  // Floating index button
+  const renderIndexButton = () => (
+    <button
+      onClick={() => setShowNavigator(true)}
+      className="fixed bottom-24 left-4 z-[70] flex items-center gap-2 px-4 py-2.5 rounded-full bg-white dark:bg-zinc-900 shadow-lg border border-zinc-200 dark:border-zinc-800 text-amber-600 dark:text-amber-500 hover:bg-amber-50 dark:hover:bg-zinc-800 transition-all active:scale-95 font-sans text-sm font-medium"
+      aria-label="فهرس القرآن"
+    >
+      <ListIcon size={18} />
+      <span className="hidden sm:inline">فهرس</span>
+    </button>
+  );
 
   // Shared modals renderer
   const renderModals = () => (
@@ -255,16 +299,17 @@ export default function QuranReader({ chapter, highlightedVerseKey, onAskAi }: Q
   if (readingViewMode === 'mushaf') {
     return (
       <div className="pb-24">
-        {/* Mushaf Page Header */}
-        <div className="text-center mb-6 py-4 border-b border-zinc-200 dark:border-zinc-900">
-          <h2 className="font-arabic text-4xl text-amber-600 dark:text-amber-500 mb-1">{chapter.name_arabic}</h2>
-          <p className="text-zinc-500 font-sans text-sm">
-            {chapter.revelation_place === 'makkah' ? 'مكية' : 'مدنية'} &bull; {chapter.verses_count} آية
-          </p>
-          <div className="flex justify-center mt-4 gap-3">
-            <button onClick={() => playChapter(chapter, getReciterApiIds(selectedReciterId).chapterApiId)} aria-label={isPlaying && currentChapterId === chapter.id ? 'إيقاف التلاوة' : 'استماع'} className={`flex items-center gap-2 px-5 py-2 rounded-full transition-all font-medium font-sans text-sm ${isPlaying && currentChapterId === chapter.id && !currentVerseKey ? 'bg-amber-600 text-white shadow-[0_0_20px_rgba(217,119,6,0.3)]' : 'bg-zinc-100 dark:bg-zinc-900 text-amber-600 dark:text-amber-500 border border-zinc-200 dark:border-zinc-800 hover:border-amber-500'}`}>
-              {isPlaying && currentChapterId === chapter.id && !currentVerseKey ? <><PauseIcon size={16} /> إيقاف</> : <><PlayIcon size={16} /> استماع</>}
-            </button>
+        {/* Mushaf Header - Juz & Surah pills like reference app */}
+        <div className="flex items-center justify-between mb-6 px-1">
+          <div className="px-4 py-2 rounded-full bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700/50">
+            <span className="text-sm font-bold text-zinc-700 dark:text-zinc-300" style={{ fontFamily: quranFont }}>
+              {juzName}
+            </span>
+          </div>
+          <div className="px-4 py-2 rounded-full bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700/50">
+            <span className="text-sm font-bold text-zinc-700 dark:text-zinc-300" style={{ fontFamily: quranFont }}>
+              سُورَةُ {chapter.name_arabic}
+            </span>
           </div>
         </div>
 
@@ -322,33 +367,58 @@ export default function QuranReader({ chapter, highlightedVerseKey, onAskAi }: Q
           )}
         </div>
 
-        {/* Mushaf Page Navigation */}
-        <div className="flex items-center justify-between mt-8 pt-4 border-t border-zinc-200 dark:border-zinc-800">
-          <button
-            onClick={goToNextPage}
-            disabled={mushafPage >= totalMushafPages - 1}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-sans text-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors"
-            aria-label="الصفحة التالية"
-          >
-            <BackIcon size={16} />
-            التالي
-          </button>
+        {/* Mushaf Footer - Surah name + Page number */}
+        <div className="mt-6 pt-4 border-t border-zinc-200 dark:border-zinc-800">
+          <div className="text-center mb-4">
+            <span className="text-sm text-zinc-500 dark:text-zinc-400" style={{ fontFamily: quranFont }}>
+              سُورَةُ {chapter.name_arabic}
+            </span>
+          </div>
 
-          <span className="text-zinc-500 dark:text-zinc-400 font-sans text-sm">
-            صفحة {toArabicNumerals(mushafPage + 1)} من {toArabicNumerals(totalMushafPages)}
-          </span>
+          {/* Page number */}
+          <div className="text-center mb-4">
+            <span className="text-lg font-bold text-zinc-600 dark:text-zinc-400 font-sans">
+              {toArabicNumerals(mushafPage + 1)}
+            </span>
+          </div>
 
-          <button
-            onClick={goToPrevPage}
-            disabled={mushafPage <= 0}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-sans text-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors"
-            aria-label="الصفحة السابقة"
-          >
-            السابق
-            <span className="rotate-180 inline-block"><BackIcon size={16} /></span>
+          {/* Page Navigation */}
+          <div className="flex items-center justify-between">
+            <button
+              onClick={goToNextPage}
+              disabled={mushafPage >= totalMushafPages - 1}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-sans text-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors"
+              aria-label="الصفحة التالية"
+            >
+              <BackIcon size={16} />
+              التالي
+            </button>
+
+            <span className="text-zinc-500 dark:text-zinc-400 font-sans text-xs">
+              {toArabicNumerals(mushafPage + 1)} / {toArabicNumerals(totalMushafPages)}
+            </span>
+
+            <button
+              onClick={goToPrevPage}
+              disabled={mushafPage <= 0}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-sans text-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors"
+              aria-label="الصفحة السابقة"
+            >
+              السابق
+              <span className="rotate-180 inline-block"><BackIcon size={16} /></span>
+            </button>
+          </div>
+        </div>
+
+        {/* Play button */}
+        <div className="flex justify-center mt-6">
+          <button onClick={() => playChapter(chapter, getReciterApiIds(selectedReciterId).chapterApiId)} aria-label={isPlaying && currentChapterId === chapter.id ? 'إيقاف التلاوة' : 'استماع'} className={`flex items-center gap-2 px-5 py-2 rounded-full transition-all font-medium font-sans text-sm ${isPlaying && currentChapterId === chapter.id && !currentVerseKey ? 'bg-amber-600 text-white shadow-[0_0_20px_rgba(217,119,6,0.3)]' : 'bg-zinc-100 dark:bg-zinc-900 text-amber-600 dark:text-amber-500 border border-zinc-200 dark:border-zinc-800 hover:border-amber-500'}`}>
+            {isPlaying && currentChapterId === chapter.id && !currentVerseKey ? <><PauseIcon size={16} /> إيقاف</> : <><PlayIcon size={16} /> استماع</>}
           </button>
         </div>
 
+        {renderIndexButton()}
+        {renderNavigator()}
         {renderModals()}
       </div>
     );
@@ -394,6 +464,9 @@ export default function QuranReader({ chapter, highlightedVerseKey, onAskAi }: Q
             );
           })}
         </div>
+
+        {renderIndexButton()}
+        {renderNavigator()}
         {renderModals()}
       </div>
     );
@@ -492,6 +565,8 @@ export default function QuranReader({ chapter, highlightedVerseKey, onAskAi }: Q
         })}
       </div>
 
+      {renderIndexButton()}
+      {renderNavigator()}
       {renderModals()}
     </div>
   );
