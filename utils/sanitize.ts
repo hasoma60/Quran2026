@@ -13,7 +13,7 @@ const ALLOWED_TAGS = new Set([
 ]);
 
 const ALLOWED_ATTRS = new Set([
-  'class', 'id', 'dir', 'lang', 'style', 'href', 'title', 'target',
+  'class', 'id', 'dir', 'lang', 'href', 'title', 'target',
 ]);
 
 const DANGEROUS_ATTR_PATTERN = /^on/i;
@@ -64,16 +64,6 @@ export function sanitizeHTML(html: string): string {
 
       // Sanitize href values
       if (attrName === 'href' && DANGEROUS_PROTO_PATTERN.test(attr.value.trim())) {
-        continue;
-      }
-
-      // Sanitize style to remove expressions
-      if (attrName === 'style') {
-        const safeStyle = attr.value
-          .replace(/expression\s*\(/gi, '')
-          .replace(/url\s*\(/gi, '')
-          .replace(/import/gi, '');
-        cleanEl.setAttribute(attrName, safeStyle);
         continue;
       }
 

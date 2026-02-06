@@ -187,7 +187,7 @@ function AppContent() {
             )}
 
             {currentView === View.JUZ_NAVIGATOR && (
-              <JuzNavigator onNavigate={handleVerseSearchSelect} />
+              <JuzNavigator chapters={chapters} onNavigate={handleVerseSearchSelect} />
             )}
 
             {currentView === View.KHATMAH && (
@@ -203,11 +203,11 @@ function AppContent() {
             )}
 
             {currentView === View.STATS && (
-              <QuranStats />
+              <QuranStats chapters={chapters} />
             )}
 
             {currentView === View.THEMATIC && (
-              <ThematicIndex onNavigate={handleVerseSearchSelect} />
+              <ThematicIndex chapters={chapters} onNavigate={handleVerseSearchSelect} />
             )}
           </Suspense>
         </ErrorBoundary>

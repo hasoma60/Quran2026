@@ -7,7 +7,7 @@ import { useBookmarks } from '../contexts/BookmarkContext';
 import { useAudio } from '../contexts/AudioContext';
 import { useReadingProgress } from '../contexts/ReadingProgressContext';
 import { useToast } from '../contexts/ToastContext';
-import { sanitizeHTML } from '../utils/sanitize';
+import { sanitizeHTML, stripHTML } from '../utils/sanitize';
 import { getLineHeightValue } from '../utils/typography';
 import { DEFAULT_TAFSIR_ID, getReciterApiIds } from '../utils/constants';
 import ShareModal from './ShareModal';
@@ -70,10 +70,13 @@ export default function QuranReader({ chapter, highlightedVerseKey, onAskAi }: Q
   }, [activeTafsirVerse, selectedTafsirId]);
 
   useEffect(() => {
-    if (!loading && highlightedVerseKey && verseRefs.current[highlightedVerseKey]) {
-      setTimeout(() => {
-        verseRefs.current[highlightedVerseKey]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 500);
+    if (!loading && highlightedVerseKey) {
+      // Use requestAnimationFrame to ensure DOM is painted before scrolling
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          verseRefs.current[highlightedVerseKey]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+      });
     }
   }, [loading, highlightedVerseKey]);
 
@@ -177,7 +180,7 @@ export default function QuranReader({ chapter, highlightedVerseKey, onAskAi }: Q
 
               {showTranslation && verse.translations && (
                 <div className="pr-4 mr-2 border-r-2 border-amber-200 dark:border-amber-800/50">
-                  <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed text-base text-justify font-sans">{verse.translations[0].text.replace(/<sup.*?<\/sup>/g, '')}</p>
+                  <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed text-base text-justify font-sans">{stripHTML(verse.translations[0].text)}</p>
                   <button onClick={() => setActiveTafsirVerse(verse)} className="text-amber-600 dark:text-amber-500 text-xs mt-3 font-medium hover:underline flex items-center gap-1">
                     قراءة التفسير
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

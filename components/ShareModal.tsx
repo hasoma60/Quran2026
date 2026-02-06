@@ -3,6 +3,7 @@ import { Verse, Chapter } from '../types';
 import { useSettings } from '../contexts/SettingsContext';
 import { useToast } from '../contexts/ToastContext';
 import { CloseIcon, CopyIcon, ShareIcon } from './Icons';
+import { stripHTML } from '../utils/sanitize';
 
 interface ShareModalProps {
   verse: Verse;
@@ -15,7 +16,7 @@ export default function ShareModal({ verse, chapter, onClose }: ShareModalProps)
   const { showToast } = useToast();
 
   const arabicOnly = verse.text_uthmani;
-  const fullText = `${verse.text_uthmani}\n\n${verse.translations?.[0]?.text.replace(/<sup.*?<\/sup>/g, '') || ''}\n\n- سورة ${chapter.name_arabic} (${verse.verse_key})`;
+  const fullText = `${verse.text_uthmani}\n\n${verse.translations?.[0] ? stripHTML(verse.translations[0].text) : ''}\n\n- سورة ${chapter.name_arabic} (${verse.verse_key})`;
   const referenceText = `سورة ${chapter.name_arabic} - الآية ${verse.verse_key.split(':')[1]}`;
 
   const copyText = async (text: string, label: string) => {

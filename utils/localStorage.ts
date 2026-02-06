@@ -14,12 +14,14 @@ export function safeGetItem<T>(key: string, fallback: T): T {
   }
 }
 
-export function safeSetItem(key: string, value: unknown): void {
+export function safeSetItem(key: string, value: unknown): boolean {
   try {
     localStorage.setItem(key, JSON.stringify(value));
+    return true;
   } catch (e) {
     // localStorage full or disabled
     console.warn('Failed to save to localStorage:', e);
+    return false;
   }
 }
 
