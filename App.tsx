@@ -83,9 +83,14 @@ function AppContent() {
   const handleBookmarkSelect = (bookmark: { chapterId: number; verseKey: string }) => {
     const chapter = chapters.find(c => c.id === bookmark.chapterId);
     if (chapter) {
+      // Clear first to force useEffect re-trigger even for same verse
+      setHighlightedVerseKey(null);
       setActiveChapter(chapter);
-      setHighlightedVerseKey(bookmark.verseKey);
       setCurrentView(View.READER);
+      // Set in next tick so the effect detects the change
+      requestAnimationFrame(() => {
+        setHighlightedVerseKey(bookmark.verseKey);
+      });
     }
   };
 
